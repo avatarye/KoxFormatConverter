@@ -21,6 +21,8 @@ def get_epub_files(file_path: str) -> list[Path]:
             file_path_to_search = file_path.parent / file_path.name.replace('?' * n, str(i).zfill(n))
             if file_path_to_search.exists():
                 files.append(file_path_to_search)
+    elif '*' in file_path.name:
+        files = list(file_path.parent.glob(file_path.name.replace('[', '*').replace(']', '*').replace('**', '*')))
     else:
         files = [file_path]
     return files
