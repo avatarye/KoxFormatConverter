@@ -6,6 +6,10 @@ import zipfile
 
 
 class ePubFile:
+    """
+    Class to convert an ePub file to a CBZ file. The ePub file should be in the format of Kox.moe ePub. The ePub file
+    will be extracted to a temporary directory, and the image files will be renamed and zipped to a CBZ file.
+    """
 
     file_path = None
     temp_dir = None
@@ -23,14 +27,24 @@ class ePubFile:
         self.clean()
 
     def extract(self) -> Path:
-        """Extract the content of the ePub file to a temporary directory."""
+        """
+        Extract the content of the ePub file to a temporary directory.
+
+        Returns:
+            The temporary directory where the ePub file is extracted.
+        """
         temp_dir = Path(tempfile.mkdtemp())
         with zipfile.ZipFile(self.file_path, 'r') as zip_ref:
             zip_ref.extractall(temp_dir)
         return temp_dir
 
     def parse_pages(self) -> list[str]:
-        """Parse the content of the ePub file."""
+        """
+        Parse the content of the ePub file.
+
+        Returns:
+            A list of image file paths in the order of the pages.
+        """
 
         def parse_page_html(page_html_file):
             nonlocal page_dict
@@ -48,7 +62,7 @@ class ePubFile:
                             image_path = match.group(1)
             return page_number, image_path
 
-        # Extract page number and corresponding image path from each page HTML file
+        # Extract page number and corresponding image path from each page's HTML file
         page_dict = {}
         page_html_files = list(self.temp_dir.glob('html/*.html'))
         for page_html_file in page_html_files:
@@ -65,7 +79,13 @@ class ePubFile:
         return images_in_page_order
 
     def generate_cbz(self, output_file_dir=None):
-        """Generate a CBZ file from the extracted ePub file."""
+        """
+        Generate a CBZ file from the extracted ePub file.
+
+        Args:
+            output_file_dir: the directory to save the CBZ file. If None, the CBZ file will be saved in the same
+                directory as the ePub file.
+        """
         # Rename the image files in order
         for i, image_file in enumerate(self.image_files_in_order):
             abs_image_file = self.temp_dir / 'html' / image_file

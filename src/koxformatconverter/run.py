@@ -1,5 +1,4 @@
 from pathlib import Path
-import re
 import sys
 
 from koxformatconverter.kox_epub import ePubFile
@@ -7,8 +6,7 @@ from koxformatconverter.kox_epub import ePubFile
 
 def get_epub_files(file_path: str) -> list[Path]:
     """
-    Get a list of ePub files based on the file path and wildcard in the path. Only ? is supported as a wildcard. User
-    needs to input the full path of the ePub file with the wildcard in correct number of digits.
+    Get a list of ePub files based on the file path and wildcard in the path. Both '?' and '*' are supported.
 
     :param file_path: a string of the file path
     :return: a list of ePub file paths
