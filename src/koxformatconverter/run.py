@@ -28,10 +28,11 @@ def get_epub_files(file_path: str) -> list[Path]:
 
 if __name__ == '__main__':
     args = sys.argv[1:]
-    if len(args) != 1:
-        print('Please input the path of the ePub files. Wildcards are supported.')
+    if len(args) < 1:
+        print('Please input the path of the ePub files. Wildcards (? and *) are supported.')
         sys.exit(1)
     epub_files = get_epub_files(args[0])
+    output_dir = args[1] if len(args) > 1 else None
     print(f'Processing {len(epub_files)} ePub files...')
     for epub_file in epub_files:
-        ePubFile(epub_file)
+        ePubFile(epub_file, output_dir)

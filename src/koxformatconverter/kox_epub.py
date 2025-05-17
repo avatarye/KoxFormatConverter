@@ -15,7 +15,7 @@ class ePubFile:
     temp_dir = None
     image_files_in_order = None
 
-    def __init__(self, file_path):
+    def __init__(self, file_path, output_dir=None):
         self.file_path = Path(file_path)
         if not (self.file_path.exists() and self.file_path.is_file() and self.file_path.suffix == '.epub'):
            raise FileNotFoundError(f"File not found at {self.file_path}")
@@ -23,7 +23,7 @@ class ePubFile:
         if self.temp_dir is None:
             raise Exception(f"Error extracting file at {self.file_path}")
         self.image_files_in_order = self.parse_pages()
-        self.generate_cbz()
+        self.generate_cbz(output_dir)
         self.clean()
 
     def extract(self) -> Path:
@@ -98,6 +98,10 @@ class ePubFile:
         # Zip the image dir to a CBZ file
         if output_file_dir is None:
             output_file_dir = self.file_path.parent
+        else:
+            output_file_dir = self.file_path.parent / output_file_dir
+            if not output_file_dir.exists():
+                output_file_dir.mkdir(parents=True)
         output_file = output_file_dir / f'{self.file_path.stem}.cbz'
         if output_file.exists():
             output_file.unlink()
