@@ -26,7 +26,7 @@ def get_epub_files(file_path: str) -> list[Path]:
     return files
 
 
-if __name__ == '__main__':
+def main():
     args = sys.argv[1:]
     if len(args) < 1:
         print('Please input the path of the ePub files. Wildcards (? and *) are supported.')
@@ -36,3 +36,7 @@ if __name__ == '__main__':
     print(f'Processing {len(epub_files)} ePub files...')
     for epub_file in epub_files:
         ePubFile(epub_file, output_dir)
+
+
+if __name__ == '__main__':
+    main()

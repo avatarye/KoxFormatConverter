@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "koxformatconverter"
-version = "0.1.0"
+version = "0.1.1"
 description = ""
 authors = ["Yongqing Ye <avatar.ye@gmail.com>"]
 license = "MIT"
@@ -16,5 +16,5 @@ pyinstaller = "^6.9.0"
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
-[too.poetry.scripts]
-run = "koxformatconverter.run:main"
+[tool.poetry.scripts]
+krun = "koxformatconverter.run:main"
