@@ -1,3 +1,25 @@
+[project]
+name = "koxformatconverter"
+version = "0.1.1"
+description = "Convert Kox.moe ePub files to CBZ format"
+authors = [
+    {name = "Yongqing Ye", email = "avatar.ye@gmail.com"}
+]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">=3.12,<3.15"
+dependencies = [
+    "rich>=13.7.0",
+]
+
+[project.scripts]
+krun = "koxformatconverter.run:main"
+
+[project.optional-dependencies]
+dev = [
+    "pyinstaller>=6.9.0",
+]
+
 [tool.poetry]
 name = "koxformatconverter"
 version = "0.1.1"
@@ -7,14 +29,20 @@ license = "MIT"
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "3.12"
+python = ">=3.12,<3.15"
+rich = "^13.7.0"
 
 [tool.poetry.group.dev.dependencies]
 pyinstaller = "^6.9.0"
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.uv]
+dev-dependencies = [
+    "pyinstaller>=6.9.0",
+]
 
 [tool.poetry.scripts]
 krun = "koxformatconverter.run:main"
