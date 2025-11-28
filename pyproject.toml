@@ -20,21 +20,6 @@ dev = [
     "pyinstaller>=6.9.0",
 ]
 
-[tool.poetry]
-name = "koxformatconverter"
-version = "0.1.1"
-description = ""
-authors = ["Yongqing Ye <avatar.ye@gmail.com>"]
-license = "MIT"
-readme = "README.md"
-
-[tool.poetry.dependencies]
-python = ">=3.12,<3.15"
-rich = "^13.7.0"
-
-[tool.poetry.group.dev.dependencies]
-pyinstaller = "^6.9.0"
-
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
@@ -43,6 +28,3 @@ build-backend = "hatchling.build"
 dev-dependencies = [
     "pyinstaller>=6.9.0",
 ]
-
-[tool.poetry.scripts]
-krun = "koxformatconverter.run:main"

@@ -14,13 +14,6 @@ uv sync
 pip install -e .
 ```
 
-### Option 3: Using Poetry
-
-```bash
-poetry install
-poetry run python src/koxformatconverter/run.py <input_file>
-```
-
 ## Running from Source
 
 ```bash
@@ -58,9 +51,6 @@ uv sync --dev
 
 # Using pip
 pip install -e ".[dev]"
-
-# Using Poetry
-poetry install --with dev
 ```
 
 ### Creating Executables
@@ -85,9 +75,6 @@ Update version in `pyproject.toml`:
 
 ```toml
 [project]
-version = "x.y.z"
-
-[tool.poetry]
 version = "x.y.z"
 ```
 
