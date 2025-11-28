@@ -5,6 +5,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import logging
 import os
 from pathlib import Path
+import re
 import sys
 from typing import Optional
 
@@ -21,6 +22,7 @@ from rich.progress import (
 )
 from rich.table import Table
 
+from koxformatconverter import __version__
 from koxformatconverter.constants import WILDCARD_QUESTION, WILDCARD_ASTERISK
 from koxformatconverter.exceptions import KoxConverterError
 from koxformatconverter.kox_epub import ePubFile
@@ -53,6 +55,26 @@ def setup_logging(verbose: bool = False):
         datefmt='%Y-%m-%d %H:%M:%S',
         handlers=[RichHandler(console=console, rich_tracebacks=True)]
     )
+
+
+def extract_series_name(filename: str) -> Optional[str]:
+    """
+    Extract series name from the second bracket in the filename.
+
+    Kox.moe files typically follow the pattern: [Source][SeriesName]Volume.epub
+    e.g., [Kmoe][天敵抗戰記Versus]卷02.epub -> 天敵抗戰記Versus
+
+    Args:
+        filename: The filename to extract from
+
+    Returns:
+        The series name if found, None otherwise
+    """
+    # Find all bracket contents
+    matches = re.findall(r'\[([^\]]+)\]', filename)
+    if len(matches) >= 2:
+        return matches[1]
+    return None
 
 
 def get_epub_files(file_path: str) -> list[Path]:
@@ -171,7 +193,7 @@ Wildcards:
         'output_dir',
         nargs='?',
         default=None,
-        help='Output directory for CBZ files (default: same as input)'
+        help='Output directory for CBZ files (default: extracted from filename, e.g., [Kmoe][SeriesName]vol01.epub -> SeriesName/)'
     )
 
     parser.add_argument(
@@ -191,7 +213,7 @@ Wildcards:
     parser.add_argument(
         '--version',
         action='version',
-        version='%(prog)s 0.1.1'
+        version=f'%(prog)s {__version__}'
     )
 
     return parser.parse_args()
@@ -218,6 +240,20 @@ def main():
     if not epub_files:
         console.print(f"[bold red]Error:[/bold red] No ePub files found matching: {args.input_path}")
         sys.exit(1)
+
+    # Determine output directory
+    output_dir = args.output_dir
+    if output_dir is None:
+        # Try to extract series name from first file
+        series_name = extract_series_name(epub_files[0].name)
+        if series_name:
+            output_dir = str(epub_files[0].parent / series_name)
+            console.print(f"[bold blue]Output directory:[/bold blue] {output_dir} (extracted from filename)")
+        else:
+            output_dir = str(epub_files[0].parent)
+            console.print(f"[bold blue]Output directory:[/bold blue] {output_dir} (same as input)")
+    else:
+        console.print(f"[bold blue]Output directory:[/bold blue] {output_dir} (user specified)")
 
     # Determine number of workers
     max_workers = args.jobs
@@ -250,7 +286,7 @@ def main():
             for epub_file in epub_files:
                 progress.update(task, description=f"[cyan]Converting: {epub_file.name}")
 
-                success, output_path = convert_file(epub_file, args.output_dir)
+                success, output_path = convert_file(epub_file, output_dir)
 
                 if success:
                     success_count += 1
@@ -266,7 +302,7 @@ def main():
             with ThreadPoolExecutor(max_workers=max_workers) as executor:
                 # Submit all tasks
                 future_to_file = {
-                    executor.submit(convert_file, epub_file, args.output_dir): epub_file
+                    executor.submit(convert_file, epub_file, output_dir): epub_file
                     for epub_file in epub_files
                 }
 
